@@ -16,6 +16,11 @@ while True:
         client, address = serv_sock.accept()
         data = client.recv(512)
         if "Send CPU" in data:
-            client.send(str(psutil.cpu_percent(interval = 1, percpu=True)))
+            cpu_percent = str(psutil.cpu_percent(interval = 1, percpu=True))
+            client.send("CPU usage percent: " + cpu_percent)
+            client.send(str(psutil.net_io_counters(pernic=True)))
+            boot_time = str(psutil.boot_time())
+            client.send("\n" + "Boottime: " + boot_time)
+            client.send("\nDone!")
             print "Information Sent."
         client.close()

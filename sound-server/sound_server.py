@@ -40,10 +40,8 @@ p.terminate()
 
 print("I got all your beautiful vibes.")
 
-vibe_pack = struct.pack('i', 0)
 # pack dem vibes
-for note in frames:
-    vibe_pack += struct.pack('i', note)
+vibe_pack = struct.pack('%si' % len(frames), *frames)
 
 # sockets
 

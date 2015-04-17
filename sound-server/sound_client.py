@@ -5,8 +5,8 @@
 import socket
 import pyaudio
 
-host = '10.134.98.188'
-port = 9998
+host = 'localhost'
+port = 9999
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -16,9 +16,16 @@ RECORD_SECONDS = 5
 
 rec_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 rec_sock.connect((host,port))
-rec_sock.send('Hello, send me the music!')
+# rec_sock.send('Hello, send me the music!')
+
 music = rec_sock.recv(5120)
-rec_sock.close()
+buffer = ''
+while len(buffer) < 5120:
+    chunk = rec_sock.recv(5120 - len(buffer))
+    if not chunk:
+        # If we can't receive any data, then the socket has died
+        break
+    buffer += chunk
 print "I got a message!"
 
 p = pyaudio.PyAudio()

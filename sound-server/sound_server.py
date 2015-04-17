@@ -5,9 +5,10 @@
 import socket
 import pyaudio
 import sys
+import struct
 
-host = '10.134.98.188'
-port = 9998
+host = 'localhost'
+port = 9999
 
 # audio record
 
@@ -39,6 +40,11 @@ p.terminate()
 
 print("I got all your beautiful vibes.")
 
+vibe_pack = struct.pack('i', 0)
+# pack dem vibes
+for note in frames:
+    vibe_pack += struct.pack('i', note)
+
 # sockets
 
 serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -49,8 +55,9 @@ print "I'm waiting to send the data...!"
 
 while True:
         client, address = serv_sock.accept()
-        data = client.recv(1024)
-        if data:
-            client.send(frames)
-            print "I sent the data!"
-            client.close()
+        while vibe_pack:
+            sent = client.send(vibe_pack)
+            if not sent:
+                # The socket has disconnected if the send fails
+                break
+            vibe_pack = vibe_pack[sent:]
